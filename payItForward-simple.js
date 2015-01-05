@@ -1,6 +1,6 @@
-// sommatoria 3 alla i
-var stop = 6500000000;
-var sommatoria = function(end){
+// summation 3^i
+var stop = 7200000000;
+var summation = function(end){
 	var temp = 0;
 	for(i = 0;;i++){
 		if (temp < end){
@@ -11,4 +11,4 @@ var sommatoria = function(end){
 		}
 	}
 };
-sommatoria(stop);
+summation(stop);
