@@ -22,7 +22,7 @@ function Person(id){
 
 var population = [];
 var connectionFactor = 50;
-var maxPopulation = 1000;
+var maxPopulation = 100000;
 
 //generate population
 for(i = 0; i<maxPopulation; i++){
@@ -81,45 +81,43 @@ var connectionInfo = function(){
 checkConnection();
 connectionInfo();
 
-//passa il favore
-
-var pool = [networks[0]._id];
+//pay it forrward
 var favors = 3;
 
+var extracted = [];
 
-	var extracted = [];
-	
-	var extractElement = function(range){
-		return Math.floor((Math.random() * range));
-	};
-	
-	var isAlreadyExtracted = function(element){
-		for (i = 0; i < extracted.length; i++){
-			if (extracted[i] === element){
-				return true;
-			}
+var extractElement = function(range){
+	return Math.floor((Math.random() * range));
+};
+
+var isAlreadyExtracted = function(element){
+	for (i = 0; i < extracted.length; i++){
+		if (extracted[i] === element){
+			return true;
 		}
-		return false;
-	};
+	}
+	return false;
+};
 
-	var startLottery = function(connectedList){
-		extracted = [];
-		var i = 0;
-		//console.log('starting lottery');
-		while(i < favors){
-			var number = extractElement(connectedList.length);
-			if (!isAlreadyExtracted(connectedList[number])){
-				extracted.push(connectedList[number]);
-				i++;
-			}
+var startLottery = function(connectedList){
+	extracted = [];
+	var i = 0;
+	//console.log('starting lottery');
+	while(i < favors){
+		var number = extractElement(connectedList.length);
+		if (!isAlreadyExtracted(connectedList[number])){
+			extracted.push(connectedList[number]);
+			i++;
 		}
-		return extracted;
-	};
-
-
+	}
+	return extracted;
+};
 
 var maxLevel = 0;
 var receivers = [];
+var networksIterator = 0;
+var pool = [networks[0]._id];
+
 var payItForward = function(){
 	while(pool.length > 0 && receivers.length < maxPopulation){
 		var current = population[pool.pop()];
@@ -129,8 +127,9 @@ var payItForward = function(){
 		current.givenTo.push(lottery);
 		//console.log(current._id + " gave is favors to : " + lottery);
 		for (i = 0; i < lottery.length; i++){
-			var tmp = population[extracted[i]];
-			tmp.level = current.level++;
+			var tmp = population[lottery[i]];
+			tmp.level = current.level+1;
+			
 			if (tmp.level > maxLevel){
 				maxLevel = tmp.level;
 			}
@@ -144,6 +143,11 @@ var payItForward = function(){
 			pool.push(tmp._id);
 		}
 		//console.log("==============================================");
+	}
+	networksIterator++;
+	if(networksIterator < networks.length){	
+		pool = networks[networksIterator]._id;
+		payItForward();
 	}
 };
 
